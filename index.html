@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+  <style>
+    #box{
+      height:550px;
+      width: 300px;
+      border:1px solid #a34;
+    }
+  </style>
+</head>
+<body>
+	<input type="text" id="inp">
+	<input type="submit" id="click">
+	<div id="box"></div>
+	<script>
+    var name = prompt("告诉我你是谁")
+    if(name ==""){
+      console.log(1);
+    }
+		var btn = document.getElementById('click');
+    var oBox = document.getElementById('box')
+
+
+		var sock = new WebSocket("ws://localhost:5001");
+		// var sock = new WebSocket("ws://echo.websocket.org");
+
+		sock.onopen = function(e){
+			console.log('open');
+      sock.send(JSON.stringify({
+        type: 'name',
+        data: name
+      }))
+
+			// sock.send('hello')
+		}
+
+		sock.onmessage = function(e){
+      serMes=JSON.parse(e.data)
+			// console.log(e.data);
+      box.innerHTML +=serMes.name+":"+serMes.data+"<br>"
+		}
+
+		sock.onclose = function(e){
+			console.log('closed')
+		}
+
+		btn.onclick = function(){
+			var ipt = document.getElementById('inp')
+      var na = ipt.value
+			// alert(ipt.value)
+			sock.send(JSON.stringify({
+        type: 'message',
+        data: na
+      }));
+
+      oBox.innerHTML +="me:" + ipt.value +"<br>";
+		}
+	</script>
+</body>
+</html>
